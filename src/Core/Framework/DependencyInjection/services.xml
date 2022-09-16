@@ -480,6 +480,10 @@ base-uri 'self';
             <tag name="shopware.scheduled.task"/>
         </service>
 
+        <service id="Shopware\Core\Framework\MessageQueue\ScheduledTask\TestCronTask">
+            <tag name="shopware.scheduled.task"/>
+        </service>
+
         <service id="Shopware\Core\Framework\Log\ScheduledTask\LogCleanupTaskHandler">
             <argument type="service" id="scheduled_task.repository"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />

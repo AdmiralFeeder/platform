@@ -45,6 +45,11 @@ class ScheduledTaskEntity extends Entity
      */
     protected $nextExecutionTime;
 
+    /**
+     * @var string
+     */
+    protected $cronTab;
+
     public function getName(): string
     {
         return $this->name;
@@ -120,5 +125,15 @@ class ScheduledTaskEntity extends Entity
     public function setNextExecutionTime(\DateTimeInterface $nextExecutionTime): void
     {
         $this->nextExecutionTime = $nextExecutionTime;
+    }
+
+    public function getCrontab(): string
+    {
+        return $this->cronTab;
+    }
+
+    public function setCronTab(string $crontab): void
+    {
+        $this->cronTab = $crontab;
     }
 }

@@ -65,12 +65,17 @@ class TaskRegistry
                 continue;
             }
 
+            if ($task::getCronTab()) {
+                $this->validateCronTab($task::getCronTab());
+            }
+
             try {
                 $this->scheduledTaskRepository->create([
                     [
                         'name' => $task::getTaskName(),
                         'scheduledTaskClass' => \get_class($task),
                         'runInterval' => $task::getDefaultInterval(),
+                        'cronTab' => $task::getCronTab(),
                         'status' => ScheduledTaskDefinition::STATUS_SCHEDULED,
                     ],
                 ], Context::createDefaultContext());
@@ -119,5 +124,22 @@ class TaskRegistry
         }
 
         return false;
+    }
+
+    private function validateCronTab($crontab): void
+    {
+        if (\is_string($crontab)) {
+            return;
+        }
+
+        if (\is_array($crontab)) {
+            foreach ($crontab as $crontabEntry) {
+                $this->validateCronTab($crontabEntry);
+            }
+
+            return;
+        }
+
+        throw new \RuntimeException('CronTab must be a string or an array of strings');
     }
 }
