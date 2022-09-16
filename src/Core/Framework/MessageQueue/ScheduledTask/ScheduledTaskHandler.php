@@ -2,6 +2,7 @@
 
 namespace Shopware\Core\Framework\MessageQueue\ScheduledTask;
 
+use Cron\CronExpression;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
@@ -81,6 +82,21 @@ abstract class ScheduledTaskHandler extends AbstractMessageHandler
     protected function rescheduleTask(ScheduledTask $task, ScheduledTaskEntity $taskEntity): void
     {
         $now = new \DateTimeImmutable();
+
+        if ($task instanceof ScheduledCronTask) {
+            $cron = new CronExpression($taskEntity::getCronTab());
+
+            $this->scheduledTaskRepository->update([
+                [
+                    'id' => $task->getTaskId(),
+                    'status' => ScheduledTaskDefinition::STATUS_SCHEDULED,
+                    'lastExecutionTime' => $now,
+                    'nextExecutionTime' => $cron->getNextRunDate('now', 0, true, 'UTC'),
+                ],
+            ], Context::createDefaultContext());
+
+            return;
+        }
 
         $nextExecutionTimeString = $taskEntity->getNextExecutionTime()->format(Defaults::STORAGE_DATE_TIME_FORMAT);
         $nextExecutionTime = new \DateTimeImmutable($nextExecutionTimeString);

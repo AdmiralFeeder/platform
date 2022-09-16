@@ -6,6 +6,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\MessageQueue\ScheduledTask\ScheduledCronTask;
 use Shopware\Core\Framework\MessageQueue\ScheduledTask\ScheduledTask;
 use Shopware\Core\Framework\MessageQueue\ScheduledTask\ScheduledTaskCollection;
 use Shopware\Core\Framework\MessageQueue\ScheduledTask\ScheduledTaskDefinition;
@@ -65,21 +66,24 @@ class TaskRegistry
                 continue;
             }
 
-            if ($task::getCronTab()) {
-                $this->validateCronTab($task::getCronTab());
+            $cron = null;
+            if ($task instanceof ScheduledCronTask) {
+                $cron = $task::getCronTab();
             }
 
             try {
+                dump($cron);
                 $this->scheduledTaskRepository->create([
                     [
                         'name' => $task::getTaskName(),
                         'scheduledTaskClass' => \get_class($task),
                         'runInterval' => $task::getDefaultInterval(),
-                        'cronTab' => $task::getCronTab(),
+                        'cronTab' => $cron,
                         'status' => ScheduledTaskDefinition::STATUS_SCHEDULED,
                     ],
                 ], Context::createDefaultContext());
             } catch (UniqueConstraintViolationException $e) {
+                dump($e->getMessage());
                 // this can happen if the function runs multiple times simultaneously
                 // we just care that the task is registered afterward so we can safely ignore the error
             }
@@ -124,22 +128,5 @@ class TaskRegistry
         }
 
         return false;
-    }
-
-    private function validateCronTab($crontab): void
-    {
-        if (\is_string($crontab)) {
-            return;
-        }
-
-        if (\is_array($crontab)) {
-            foreach ($crontab as $crontabEntry) {
-                $this->validateCronTab($crontabEntry);
-            }
-
-            return;
-        }
-
-        throw new \RuntimeException('CronTab must be a string or an array of strings');
     }
 }

@@ -7,7 +7,7 @@ namespace Shopware\Core\Framework\MessageQueue\ScheduledTask;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 
-class TestCronTaskHandler extends CronTaskHandler
+class TestCronTaskHandler extends ScheduledTaskHandler
 {
     protected LoggerInterface $logger;
 
