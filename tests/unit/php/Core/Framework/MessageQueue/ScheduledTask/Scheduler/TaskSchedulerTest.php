@@ -29,7 +29,6 @@ class TaskSchedulerTest extends TestCase
      * @param AggregationResult[] $aggregationResult
      *
      * @dataProvider providerGetNextExecutionTime
-     * @group mysample
      */
     public function testGetNextExecutionTime(array $aggregationResult, ?\DateTime $time): void
     {
@@ -78,7 +77,6 @@ class TaskSchedulerTest extends TestCase
      * @param AggregationResult[] $aggregationResult
      *
      * @dataProvider providerGetMinRunInterval
-     * @group mysample
      */
     public function testGetMinRunInterval(array $aggregationResult, ?int $time): void
     {
@@ -123,9 +121,6 @@ class TaskSchedulerTest extends TestCase
         ];
     }
 
-    /**
-     * @group mysample
-     */
     public function testScheduleNothingMatches(): void
     {
         $scheduledTaskRepository = $this->createMock(EntityRepositoryInterface::class);
@@ -144,7 +139,6 @@ class TaskSchedulerTest extends TestCase
 
     /**
      * @dataProvider providerScheduledTaskQueues
-     * @group mysample
      */
     public function testScheduledTaskQueues(int $delay, bool $expected): void
     {
@@ -190,9 +184,6 @@ class TaskSchedulerTest extends TestCase
         yield [0, false];
     }
 
-    /**
-     * @group mysample
-     */
     public function testScheduleWithInvalidClass(): void
     {
         $scheduledTask = new ScheduledTaskEntity();
