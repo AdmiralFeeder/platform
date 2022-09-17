@@ -60,6 +60,7 @@ class ScheduledTaskDefinition extends EntityDefinition
             (new StringField('name', 'name'))->addFlags(new Required()),
             (new StringField('scheduled_task_class', 'scheduledTaskClass', 512))->addFlags(new Required()),
             (new IntField('run_interval', 'runInterval', 0))->addFlags(new Required()),
+            new StringField('crontab', 'crontab'),
             (new StringField('status', 'status'))->addFlags(new Required()),
             new DateTimeField('last_execution_time', 'lastExecutionTime'),
             (new DateTimeField('next_execution_time', 'nextExecutionTime'))->addFlags(new Required()),

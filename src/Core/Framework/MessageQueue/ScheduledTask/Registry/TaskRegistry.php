@@ -72,13 +72,12 @@ class TaskRegistry
             }
 
             try {
-                dump($cron);
                 $this->scheduledTaskRepository->create([
                     [
                         'name' => $task::getTaskName(),
                         'scheduledTaskClass' => \get_class($task),
                         'runInterval' => $task::getDefaultInterval(),
-                        'cronTab' => $cron,
+                        'crontab' => $cron,
                         'status' => ScheduledTaskDefinition::STATUS_SCHEDULED,
                     ],
                 ], Context::createDefaultContext());

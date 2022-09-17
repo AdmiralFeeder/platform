@@ -84,14 +84,14 @@ abstract class ScheduledTaskHandler extends AbstractMessageHandler
         $now = new \DateTimeImmutable();
 
         if ($task instanceof ScheduledCronTask) {
-            $cron = new CronExpression($taskEntity::getCronTab());
+            $nextExecutionTime = $this->calculateNextExecutionTime($taskEntity, $now);
 
             $this->scheduledTaskRepository->update([
                 [
                     'id' => $task->getTaskId(),
                     'status' => ScheduledTaskDefinition::STATUS_SCHEDULED,
                     'lastExecutionTime' => $now,
-                    'nextExecutionTime' => $cron->getNextRunDate('now', 0, true, 'UTC'),
+                    'nextExecutionTime' => $nextExecutionTime,
                 ],
             ], Context::createDefaultContext());
 
@@ -114,5 +114,17 @@ abstract class ScheduledTaskHandler extends AbstractMessageHandler
                 'nextExecutionTime' => $newNextExecutionTime,
             ],
         ], Context::createDefaultContext());
+    }
+
+    protected function calculateNextExecutionTime(ScheduledTaskEntity $taskEntity, \DateTimeImmutable $now): \DateTimeInterface
+    {
+        $cron = new CronExpression($taskEntity->getCrontab());
+        $nextCronTime = $cron->getNextRunDate('now', 0, true, 'UTC');
+        $now = $now->setTime((int) $now->format('h'), (int) $now->format('i'), 0, 0);
+        if ($now->getTimestamp() === $nextCronTime->getTimestamp()) {
+            $nextCronTime = $cron->getNextRunDate('now', 1, true, 'UTC');
+        }
+
+        return $nextCronTime;
     }
 }

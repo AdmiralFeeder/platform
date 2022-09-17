@@ -14,7 +14,7 @@ class Migration1663337922AddCrontabToScheduledTasks extends MigrationStep
 
     public function update(Connection $connection): void
     {
-        $connection->executeStatement('ALTER TABLE `scheduled_task` ADD `crontab` VARCHAR(255);');
+        $connection->executeStatement('ALTER TABLE `scheduled_task` ADD `crontab` VARCHAR(255) AFTER `run_interval`;');
     }
 
     public function updateDestructive(Connection $connection): void

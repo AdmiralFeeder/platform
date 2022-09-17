@@ -48,7 +48,7 @@ class ScheduledTaskEntity extends Entity
     /**
      * @var string
      */
-    protected $cronTab;
+    protected $crontab;
 
     public function getName(): string
     {
@@ -129,11 +129,11 @@ class ScheduledTaskEntity extends Entity
 
     public function getCrontab(): string
     {
-        return $this->cronTab;
+        return $this->crontab;
     }
 
-    public function setCronTab(string $crontab): void
+    public function setCrontab(string $crontab): void
     {
-        $this->cronTab = $crontab;
+        $this->crontab = $crontab;
     }
 }
